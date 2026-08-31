@@ -36,6 +36,15 @@
       padding: 10px 15px;
       border-radius: 8px;
       font-size: 16px;
+      cursor: pointer;
+    }
+
+    #cart {
+      background: #222;
+      color: white;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 12px;
     }
   </style>
 </head>
@@ -48,22 +57,68 @@
     <h2>Nasi Goreng</h2>
     <p>Fried rice with egg and vegetables.</p>
     <p class="price">RM 12.00</p>
-    <button>Add to Order</button>
+    <button onclick="addToCart('Nasi Goreng', 12)">
+      Add to Order
+    </button>
   </div>
 
   <div class="menu-item">
     <h2>Chicken Rice</h2>
     <p>Steamed chicken served with fragrant rice.</p>
     <p class="price">RM 10.00</p>
-    <button>Add to Order</button>
+    <button onclick="addToCart('Chicken Rice', 10)">
+      Add to Order
+    </button>
   </div>
 
   <div class="menu-item">
     <h2>Iced Tea</h2>
     <p>Refreshing cold tea.</p>
     <p class="price">RM 4.00</p>
-    <button>Add to Order</button>
+    <button onclick="addToCart('Iced Tea', 4)">
+      Add to Order
+    </button>
   </div>
+
+  <div id="cart">
+    <h2>🛒 Your Order</h2>
+    <div id="cart-items">Your cart is empty.</div>
+    <h3 id="total">Total: RM 0.00</h3>
+  </div>
+
+  <script>
+    let cart = [];
+
+    function addToCart(name, price) {
+      cart.push({
+        name: name,
+        price: price
+      });
+
+      displayCart();
+    }
+
+    function displayCart() {
+      let cartItems = document.getElementById("cart-items");
+      let total = 0;
+
+      cartItems.innerHTML = "";
+
+      cart.forEach(function(item) {
+        let itemElement = document.createElement("p");
+
+        itemElement.textContent =
+          item.name + " - RM " + item.price.toFixed(2);
+
+        cartItems.appendChild(itemElement);
+
+        total += item.price;
+      });
+
+      document.getElementById("total").textContent =
+        "Total: RM " + total.toFixed(2);
+    }
+  </script>
 
 </body>
 </html>
