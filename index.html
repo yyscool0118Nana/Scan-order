@@ -218,6 +218,14 @@
 
     let cart = [];
 
+    const SUPABASE_URL = "https://eznyaowhjatdlwcylsjl.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "sb_publishable_7wBcH_D9vwvsZu9y5z1V6Q_OV1HNUAE";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
 
     function addToCart(name, price) {
 
@@ -400,47 +408,88 @@
     }
 
 
-    function placeOrder() {
+ async function placeOrder() {
 
-      let name =
-        document.getElementById("customer-name").value.trim();
+  let name =
+    document.getElementById("customer-name").value.trim();
 
+  let table =
+    document.getElementById("table-number").value;
 
-      let table =
-        document.getElementById("table-number").value;
-
-
-      let request =
-        document.getElementById("special-request").value.trim();
+  let request =
+    document.getElementById("special-request").value.trim();
 
 
-      if (name === "") {
+  if (name === "") {
 
-        alert("Please enter your name.");
+    alert("Please enter your name.");
 
-        return;
+    return;
 
+  }
+
+
+  if (table === "") {
+
+    alert("Please enter your table number.");
+
+    return;
+
+  }
+
+
+  let total = 0;
+
+  cart.forEach(function(item) {
+
+    total += item.price * item.quantity;
+
+  });
+
+
+  const { data, error } = await supabaseClient
+    .from("orders")
+    .insert([
+      {
+        customer_name: name,
+        table_number: Number(table),
+        special_request: request,
+        total: total,
+        status: "new"
       }
+    ])
+    .select();
 
 
-      if (table === "") {
+  if (error) {
 
-        alert("Please enter your table number.");
+    console.error(error);
 
-        return;
+    alert(
+      "There was a problem sending your order."
+    );
 
-      }
+    return;
+
+  }
 
 
-      alert(
-        "Order received!\n\n" +
-        "Name: " + name + "\n" +
-        "Table: " + table + "\n" +
-        "Special request: " +
-        (request || "None")
-      );
+  alert(
+    "✅ Order received!\n\n" +
+    "Order number: " + data[0].id + "\n" +
+    "Name: " + name + "\n" +
+    "Table: " + table + "\n" +
+    "Total: RM " + total.toFixed(2)
+  );
 
-    }
+
+  cart = [];
+
+  displayCart();
+
+  document.getElementById("checkout-form").style.display = "none";
+
+}
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
