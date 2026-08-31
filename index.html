@@ -111,9 +111,9 @@
 
     <h3 id="total">Total: RM 0.00</h3>
 
-    <button id="checkout" onclick="checkout()">
-      🛒 Checkout
-    </button>
+    <button id="checkout" onclick="showCheckout()">
+  🛒 Checkout
+</button>
 
   </div>
 
@@ -235,19 +235,121 @@
     }
 
 
-    function checkout() {
+    function showCheckout() {
 
-      if (cart.length === 0) {
+  if (cart.length === 0) {
 
-        alert("Your cart is empty.");
+    alert("Your cart is empty.");
 
-        return;
+    return;
 
-      }
+  }
 
-      alert("Checkout coming next!");
+  document.getElementById("checkout-form").style.display = "block";
 
-    }
+  document.getElementById("checkout-form").scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
+
+
+function placeOrder() {
+
+  let name = document.getElementById("customer-name").value;
+
+  let table = document.getElementById("table-number").value;
+
+  let request = document.getElementById("special-request").value;
+
+
+  if (name === "") {
+
+    alert("Please enter your name.");
+
+    return;
+
+  }
+
+
+  if (table === "") {
+
+    alert("Please enter your table number.");
+
+    return;
+
+  }
+
+
+  alert(
+    "Order received!\\n\\n" +
+    "Name: " + name + "\\n" +
+    "Table: " + table + "\\n" +
+    "Special request: " + request
+  );
+
+}
+   
+    <div id="checkout-form" style="
+  display:none;
+  background:white;
+  color:#222;
+  padding:20px;
+  margin-top:20px;
+  border-radius:12px;
+">
+
+  <h2>🛒 Checkout</h2>
+
+  <label>Your Name</label>
+
+  <input
+    id="customer-name"
+    type="text"
+    placeholder="Enter your name"
+    style="
+      width:100%;
+      padding:12px;
+      margin:8px 0 15px;
+      box-sizing:border-box;
+    "
+  >
+
+  <label>Table Number</label>
+
+  <input
+    id="table-number"
+    type="number"
+    placeholder="Example: 5"
+    style="
+      width:100%;
+      padding:12px;
+      margin:8px 0 15px;
+      box-sizing:border-box;
+    "
+  >
+
+  <label>Special Request</label>
+
+  <textarea
+    id="special-request"
+    placeholder="Example: No onions"
+    style="
+      width:100%;
+      padding:12px;
+      margin:8px 0 15px;
+      box-sizing:border-box;
+    "
+  ></textarea>
+
+  <button onclick="placeOrder()" style="
+    width:100%;
+    background:#2a9d8f;
+  ">
+    ✅ Place Order
+  </button>
+
+</div>
 
   </script>
 
