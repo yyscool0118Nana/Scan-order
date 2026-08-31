@@ -480,27 +480,18 @@
       });
 
 
-      const { data, error } =
-        await supabaseClient
-          .from("orders")
-          .insert([
-
-            {
-
-              customer_name: name,
-
-              table_number: Number(table),
-
-              special_request: request,
-
-              total: total,
-
-              status: "new"
-
-            }
-
-          ])
-          .select();
+      const { error } =
+  await supabaseClient
+    .from("orders")
+    .insert([
+      {
+        customer_name: name,
+        table_number: Number(table),
+        special_request: request,
+        total: total,
+        status: "new"
+      }
+    ]);
 
 
       if (error) {
@@ -517,22 +508,11 @@
 
 
       alert(
-
-        "✅ Order received!\n\n" +
-
-        "Order number: " +
-        data[0].id +
-
-        "\nName: " +
-        name +
-
-        "\nTable: " +
-        table +
-
-        "\nTotal: RM " +
-        total.toFixed(2)
-
-      );
+  "✅ Order received!\n\n" +
+  "Name: " + name + "\n" +
+  "Table: " + table + "\n" +
+  "Total: RM " + total.toFixed(2)
+);
 
 
       cart = [];
