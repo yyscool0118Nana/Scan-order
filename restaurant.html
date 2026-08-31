@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Restaurant Orders</title>
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+
+    #orders {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .order {
+      background: white;
+      margin: 15px 0;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border-left: 6px solid #e63946;
+    }
+
+    .order h2 {
+      margin-top: 0;
+    }
+
+    .item {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .total {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .status {
+      display: inline-block;
+      background: #e63946;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .empty {
+      text-align: center;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <h1>🍽️ Restaurant Orders</h1>
+
+  <div id="orders">
+    Loading orders...
+  </div>
+
+
+  <!-- Supabase -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <script>
+
+    const SUPABASE_URL =
+      "https://eznyaowhjatdlwcylsjl.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "YOUR_PUBLISHABLE_KEY_HERE";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    async function loadOrders() {
+
+      const { data, error } =
+        await supabaseClient
+          .from("orders")
+          .select("*")
+          .order("created_at", {
+            ascending: false
+          });
+
+
+      if (error) {
+
+        console.error(error);
+
+        document.getElementById("orders").innerHTML =
+          "<div class='empty'>Unable to load orders.</div>";
+
+        return;
+
+      }
+
+
+      let ordersDiv =
+        document.getElementById("orders");
+
+
+      if (data.length === 0) {
+
+        ordersDiv.innerHTML =
+          "<div class='empty'>No orders yet.</div>";
+
+        return;
+
+      }
+
+
+      ordersDiv.innerHTML = "";
+
+
+      data.forEach(function(order) {
+
+        let itemsHTML = "";
+
+
+        if (order.order_items) {
+
+          order.order_items.forEach(function(item) {
+
+            itemsHTML += `
+
+              <div class="item">
+
+                ${item.quantity} × ${item.name}
+
+                — RM ${(item.price * item.quantity).toFixed(2)}
+
+              </div>
+
+            `;
+
+          });
+
+        }
+
+
+        ordersDiv.innerHTML += `
+
+          <div class="order">
+
+            <span class="status">
+              ${order.status}
+            </span>
+
+            <h2>
+              🪑 Table ${order.table_number}
+            </h2>
+
+            <p>
+              <strong>Customer:</strong>
+              ${order.customer_name}
+            </p>
+
+            <h3>Order:</h3>
+
+            ${itemsHTML}
+
+            <div class="total">
+              Total: RM ${Number(order.total).toFixed(2)}
+            </div>
+
+            <p>
+              <strong>Request:</strong>
+              ${order.special_request || "None"}
+            </p>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+
+    loadOrders();
+
+
+  </script>
+
+
+</body>
+
+</html>
