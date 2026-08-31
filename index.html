@@ -5,6 +5,9 @@
 
   <title>My Restaurant</title>
 
+  <!-- Supabase library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
 
     body {
@@ -170,7 +173,7 @@
   </div>
 
 
-  <!-- CHECKOUT FORM -->
+  <!-- CHECKOUT -->
 
   <div id="checkout-form">
 
@@ -218,20 +221,29 @@
 
     let cart = [];
 
-    const SUPABASE_URL = "https://eznyaowhjatdlwcylsjl.supabase.co/rest/v1/";
-const SUPABASE_ANON_KEY = "sb_publishable_7wBcH_D9vwvsZu9y5z1V6Q_OV1HNUAE";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+    // Supabase connection
 
+    const SUPABASE_URL =
+      "https://eznyaowhjatdlwcylsjl.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_7wBcH_D9vwvsZu9y5z1V6Q_OV1HNUAE";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+
+    // ADD TO CART
 
     function addToCart(name, price) {
 
-      let existingItem = cart.find(
-        item => item.name === name
-      );
+      let existingItem =
+        cart.find(item => item.name === name);
 
 
       if (existingItem) {
@@ -258,11 +270,12 @@ const supabaseClient = window.supabase.createClient(
     }
 
 
+    // INCREASE
+
     function increase(name) {
 
-      let item = cart.find(
-        item => item.name === name
-      );
+      let item =
+        cart.find(item => item.name === name);
 
 
       if (item) {
@@ -277,15 +290,18 @@ const supabaseClient = window.supabase.createClient(
     }
 
 
+    // DECREASE
+
     function decrease(name) {
 
-      let item = cart.find(
-        item => item.name === name
-      );
+      let item =
+        cart.find(item => item.name === name);
 
 
       if (!item) {
+
         return;
+
       }
 
 
@@ -305,6 +321,8 @@ const supabaseClient = window.supabase.createClient(
 
     }
 
+
+    // DISPLAY CART
 
     function displayCart() {
 
@@ -383,6 +401,8 @@ const supabaseClient = window.supabase.createClient(
     }
 
 
+    // SHOW CHECKOUT
+
     function showCheckout() {
 
       if (cart.length === 0) {
@@ -408,91 +428,125 @@ const supabaseClient = window.supabase.createClient(
     }
 
 
- async function placeOrder() {
+    // PLACE ORDER
 
-  let name =
-    document.getElementById("customer-name").value.trim();
+    async function placeOrder() {
 
-  let table =
-    document.getElementById("table-number").value;
-
-  let request =
-    document.getElementById("special-request").value.trim();
-
-
-  if (name === "") {
-
-    alert("Please enter your name.");
-
-    return;
-
-  }
+      let name =
+        document
+          .getElementById("customer-name")
+          .value
+          .trim();
 
 
-  if (table === "") {
-
-    alert("Please enter your table number.");
-
-    return;
-
-  }
+      let table =
+        document.getElementById("table-number")
+          .value;
 
 
-  let total = 0;
-
-  cart.forEach(function(item) {
-
-    total += item.price * item.quantity;
-
-  });
+      let request =
+        document
+          .getElementById("special-request")
+          .value
+          .trim();
 
 
-  const { data, error } = await supabaseClient
-    .from("orders")
-    .insert([
-      {
-        customer_name: name,
-        table_number: Number(table),
-        special_request: request,
-        total: total,
-        status: "new"
+      if (name === "") {
+
+        alert("Please enter your name.");
+
+        return;
+
       }
-    ])
-    .select();
 
 
-  if (error) {
+      if (table === "") {
 
-    console.error(error);
+        alert("Please enter your table number.");
 
-    alert(
-      "There was a problem sending your order."
-    );
+        return;
 
-    return;
-
-  }
+      }
 
 
-  alert(
-    "✅ Order received!\n\n" +
-    "Order number: " + data[0].id + "\n" +
-    "Name: " + name + "\n" +
-    "Table: " + table + "\n" +
-    "Total: RM " + total.toFixed(2)
-  );
+      let total = 0;
 
 
-  cart = [];
+      cart.forEach(function(item) {
 
-  displayCart();
+        total +=
+          item.price * item.quantity;
 
-  document.getElementById("checkout-form").style.display = "none";
+      });
 
-}
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+      const { data, error } =
+        await supabaseClient
+          .from("orders")
+          .insert([
+
+            {
+
+              customer_name: name,
+
+              table_number: Number(table),
+
+              special_request: request,
+
+              total: total,
+
+              status: "new"
+
+            }
+
+          ])
+          .select();
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "There was a problem sending your order."
+        );
+
+        return;
+
+      }
+
+
+      alert(
+
+        "✅ Order received!\n\n" +
+
+        "Order number: " +
+        data[0].id +
+
+        "\nName: " +
+        name +
+
+        "\nTable: " +
+        table +
+
+        "\nTotal: RM " +
+        total.toFixed(2)
+
+      );
+
+
+      cart = [];
+
+
+      displayCart();
+
+
+      document
+        .getElementById("checkout-form")
+        .style.display = "none";
+
+    }
+
   </script>
 
 
